@@ -9,10 +9,25 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {origin:"http://localhost:5173", methods: ["GET", "POST"]},
 });
-
+app.use(express.json())
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
     
+app.post("/sendpayload", (req, res) => {   
+    const {userId,payload}=req.body
+    if(!userId || !payload){
+        res.status(400).send("userId and payload are required")
+    }
+
+    redis.get(userId, (err, result) => {
+        if (err) {
+          console.error(err);
+        } else {
+          io.to(result).emit("payload", payload);
+        }
+    })
+ })
+
     socket.on("redis-cache", (data) => {
         redis.set(data.userId,socket.id);
         redis.get("1", (err, result) => {
