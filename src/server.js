@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const { Server } = require("socket.io");
-
+const  Redis =require ('ioredis');
+// By default, it will connect to localhost:6379.
+const redis = new Redis();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {origin:"http://localhost:5173", methods: ["GET", "POST"]},
@@ -11,9 +13,15 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
     
-    socket.on("send_message", (data) => {
-        console.log(data);
-    //   socket.broadcast.emit("receive_message", data);
+    socket.on("redis-cache", (data) => {
+        redis.set(data.userId,socket.id);
+        redis.get("1", (err, result) => {
+            if (err) {
+              console.error(err);
+            } else {
+              console.log(result); 
+            }
+          })
     });
   });
 
