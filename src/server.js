@@ -24,6 +24,7 @@ io.on("connection", (socket) => {
     
     try {
       app.post("/sendpayload",async (req, res) => {  
+        console.log("payload data",req.body)
         const payload=await req.body
         if(!payload){
             res.status(400).send("userId and payload are required")
