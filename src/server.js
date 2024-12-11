@@ -4,7 +4,16 @@ const http = require('http');
 const { Server } = require("socket.io");
 const  Redis =require ('ioredis');
 // By default, it will connect to localhost:6379.
-const redis = new Redis();
+let redis;
+if(!process.env.REDIS_HOST){
+  redis = new Redis({
+    host:process.env.REDIS_HOST,
+    port: 6379
+  });
+}else{
+   redis = new Redis();
+}
+
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {origin:["http://localhost:5173","http://localhost:5000"], methods: ["GET", "POST"]},
