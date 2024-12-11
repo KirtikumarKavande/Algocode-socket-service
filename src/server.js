@@ -19,6 +19,10 @@ const io = new Server(server, {
     cors: {origin:["http://localhost:5173","http://localhost:5000"], methods: ["GET", "POST"]},
 });
 app.use(express.json())
+
+app.get("/ping", (req, res) => {
+    res.send("pong");
+})
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
     
