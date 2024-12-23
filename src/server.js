@@ -3,6 +3,7 @@ const app = express();
 const http = require('http');
 const { Server } = require("socket.io");
 const  Redis =require ('ioredis');
+const job = require('./cron/cron');
 // By default, it will connect to localhost:6379.
 let redis;
 if(process.env.REDIS_HOST){
@@ -19,6 +20,7 @@ const io = new Server(server, {
     cors: {origin:["http://localhost:5173","http://localhost:5000","https://algocode-phi.vercel.app"], methods: ["GET", "POST"]},
 });
 app.use(express.json())
+job.start();
 
 app.get("/ping", (req, res) => {
     res.send("pong");
